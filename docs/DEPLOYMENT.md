@@ -109,12 +109,12 @@ For actual serving, use a long-lived process: Render, Koyeb/Fly-style app hosts,
 
 ## Render (recommended free path)
 
-The repository includes `render.yaml`, a Render Blueprint. You can start from <https://render.com/deploy?repo=https://github.com/MeYashverma/OpenAccess> or follow the steps manually.
+The repository includes `render.yaml`, a Render Blueprint. You can start from <https://render.com/deploy?repo=https://github.com/MeYashverma/OpenAccess> or follow the steps manually. The blueprint sets `MAX_BUFFERED_MB=96` and `EGRESS_LIMIT_MB_PER_HOUR=120`, sized for the free instance's 512 MB RAM and 100 GB/month bandwidth.
 
 1. Push the repository to GitHub.
 2. In Render: **New → Blueprint**, select the repository, apply the plan. The free plan does not require a card.
-3. Render runs `npm ci && npm run build`, starts `npm start`, and checks `/healthz`.
-4. When the first deploy finishes, copy `https://<service>.onrender.com` into the `PUBLIC_ORIGIN` environment variable and redeploy. This is optional for booting but recommended.
+3. Render runs `npm ci --include=dev && npm run build`, starts `npm start`, and checks `/healthz`.
+4. No environment values are required. Render sets `RENDER_EXTERNAL_URL`, which the server uses as the canonical public origin when `PUBLIC_ORIGIN` is empty. Set `PUBLIC_ORIGIN` only if you attach a custom domain.
 5. Optional: isolated mode. Add a custom domain such as `openaccess.example.com`, add a second custom domain `p.openaccess.example.com` to the **same** service, then set:
    - `PUBLIC_ORIGIN=https://openaccess.example.com`
    - `CONTENT_ORIGIN=https://p.openaccess.example.com`

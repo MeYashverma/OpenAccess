@@ -94,7 +94,10 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
     host: env.HOST || '0.0.0.0',
     port: num(env.PORT, 3000),
-    publicOrigin: origin(env.PUBLIC_ORIGIN),
+    // Render injects RENDER_EXTERNAL_URL for web services. Using it as a
+    // fallback gives a zero-config deploy the correct canonical origin and
+    // keeps the strict host gate working before a custom domain is attached.
+    publicOrigin: origin(env.PUBLIC_ORIGIN) ?? origin(env.RENDER_EXTERNAL_URL),
     contentOrigin: origin(env.CONTENT_ORIGIN),
     trustProxy: bool(env.TRUST_PROXY, true),
     forceHttps: bool(env.FORCE_HTTPS, false),

@@ -75,7 +75,7 @@ The production server needs the built client and runtime (`dist/client`, `dist/r
 
 ```bash
 npm run typecheck        # server + client TypeScript
-npm test                 # 135 unit, integration, runtime and UI tests
+npm test                 # 136 unit, integration, runtime and UI tests
 npm run build            # server, client and injected runtime
 npm run smoke -- --base http://localhost:3000 --offline
 ```
@@ -109,12 +109,14 @@ This is genuinely GitHub-hosted compute, not GitHub Pages. It is also not a 24/7
 
 If you add a `RENDER_DEPLOY_HOOK_URL` repository secret, the included GitHub Actions workflow deploys after a green CI run on `main`. Actions handles the pipeline; Render handles the long-lived process. GitHub Actions runners themselves are not used as the host (see [why](docs/DEPLOYMENT.md#why-not-github-actions-runners-as-the-host)).
 
-[Deploy to Render](https://render.com/deploy?repo=https://github.com/MeYashverma/OpenAccess) · or follow the manual steps:
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/MeYashverma/OpenAccess)
+
+Or follow the manual steps:
 
 1. Fork or push this repository to GitHub.
 2. In Render, choose **New → Blueprint**, pick the repository, and apply `render.yaml`.
-3. Render builds with `npm ci && npm run build`, starts `npm start`, and probes `/healthz` over HTTPS.
-4. After the first deploy, copy the assigned `https://<service>.onrender.com` URL into the `PUBLIC_ORIGIN` environment variable and redeploy.
+3. Render builds with `npm ci --include=dev && npm run build`, starts `npm start`, and probes `/healthz` over HTTPS.
+4. That is it: the blueprint passes no required values. The server reads Render's `RENDER_EXTERNAL_URL`, so canonical links and the host gate use `https://<service>.onrender.com` automatically. Set `PUBLIC_ORIGIN` only when you attach a custom domain.
 
 Free instances sleep after a period of inactivity, so the first visit after a pause can take a minute. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for limits, custom domains, separate content origins, Docker, and reverse-proxy configuration.
 
