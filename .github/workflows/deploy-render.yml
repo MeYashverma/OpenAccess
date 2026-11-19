@@ -1,0 +1,30 @@
+name: Deploy to Render
+
+# GitHub Actions is the deploy pipeline, not the runtime host. This workflow
+# triggers a Render deploy hook after CI passes on main (or on demand). It is a
+# no-op until the repository has a RENDER_DEPLOY_HOOK_URL secret.
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Trigger Render deploy
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy hook
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::notice::RENDER_DEPLOY_HOOK_URL is not configured; skipping deploy."
+            exit 0
+          fi
+          curl --fail --silent --show-error --request POST "$HOOK"

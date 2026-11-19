@@ -84,7 +84,28 @@ Caveats:
 - If the port is private, only signed-in GitHub users with access to the repository can open it.
 - If you change the source, rebuild inside the codespace (`npm run build`) and restart with `scripts/codespace-start.sh`.
 
-For a 24/7 URL, use Render, another long-lived container host, or a VPS below. Codespaces is the only GitHub-native runtime that can serve a real proxy; GitHub Pages remains static-only.
+For a 24/7 URL, use Render, another long-lived container host, or a VPS below. Codespaces is the only GitHub-native runtime that can serve a real proxy; GitHub Pages remains static-only. See [why GitHub Actions runners cannot be rotated as a host](#why-not-github-actions-runners-as-the-host).
+
+## Why not GitHub Actions runners as the host?
+
+A scheduler that starts a new six-hour Actions job when the previous one ends looks attractive, and it does not work as a hosting strategy:
+
+1. **No inbound networking.** GitHub-hosted runners have outbound access only. A public URL requires a third-party tunnel (`localhost.run`, ngrok, Cloudflare Tunnel, …). That adds another account/ToS, and the tunnel URL either changes every run or requires a paid stable domain.
+2. **Every run is a fresh machine.** Cookies, sessions and rate-limit state vanish, the runner IP changes, and the tunnel must be re-established. A browser session cannot survive the hand-off.
+3. **Six-hour ceiling with gaps.** Jobs have a hard time limit. Restarting “just before” it ends leaves an outage window, and GitHub's scheduler is not a uptime SLA. A cron can be delayed or skipped under load.
+4. **The Acceptable Use Policies do not allow it.** GitHub Actions is for building, testing, deploying and publishing the project. Running a public general-purpose proxy for arbitrary browsing is unrelated hosting/serverless compute, and the traffic pattern looks like abuse. Accounts can be limited.
+5. **Security.** Anyone with the rotating URL gets an open proxy on your account, with your repository's Actions permissions adjacent. Logs may capture tunnel URLs; job tokens live in the environment. This is exactly the kind of resource that should be isolated and rate-limited, not recycled every six hours.
+
+If you configure the deploy hook while Render's own `autoDeploy` is enabled, Render may build twice; disable one of the two. The hook is optional and the blueprint works without it.
+
+The legitimate GitHub-native roles are:
+
+- **CI** — typecheck, tests, build and smoke tests (`.github/workflows/ci.yml`).
+- **Deployment pipeline** — trigger a Render deploy hook after a green `main` build (`.github/workflows/deploy-render.yml`, optional secret).
+- **Packaging** — publish the container to GHCR (`.github/workflows/docker.yml`).
+- **Temporary runtime** — a Codespace with a public forwarded port, for development/preview, within the free quota and idle limits.
+
+For actual serving, use a long-lived process: Render, Koyeb/Fly-style app hosts, Docker on a VPS, or your own machine with a TLS reverse proxy.
 
 ## Render (recommended free path)
 

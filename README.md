@@ -107,6 +107,8 @@ This is genuinely GitHub-hosted compute, not GitHub Pages. It is also not a 24/7
 
 ### Render (free plan, no card)
 
+If you add a `RENDER_DEPLOY_HOOK_URL` repository secret, the included GitHub Actions workflow deploys after a green CI run on `main`. Actions handles the pipeline; Render handles the long-lived process. GitHub Actions runners themselves are not used as the host (see [why](docs/DEPLOYMENT.md#why-not-github-actions-runners-as-the-host)).
+
 [Deploy to Render](https://render.com/deploy?repo=https://github.com/MeYashverma/OpenAccess) · or follow the manual steps:
 
 1. Fork or push this repository to GitHub.
@@ -130,6 +132,7 @@ Or `docker compose up --build` with a `.env` file based on [.env.example](.env.e
 | Platform | Why not |
 | --- | --- |
 | GitHub Pages / Netlify static / Cloudflare Pages | Static file hosts cannot run the Node process, hold cookies, or open upstream sockets. (GitHub Codespaces can run it temporarily — see above.) |
+| GitHub Actions runners | No inbound ports, 6-hour job limit, rotating IPs and an acceptable-use policy that excludes general hosting. Use Actions to build/deploy, not to serve. |
 | Cloudflare Workers / Pages Functions | Cloudflare's terms prohibit running a proxy/VPN service on their network, and the runtime cannot offer the same socket and timeout behaviour. |
 | Serverless functions (Vercel, Netlify Functions) | Per-request limits break WebSockets, streaming downloads and in-memory sessions; many providers also prohibit proxy services. |
 
