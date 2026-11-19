@@ -57,6 +57,27 @@ describe('public API', () => {
   });
 });
 
+describe('reverse proxy headers', () => {
+  it('derives the public origin from X-Forwarded-Host when trusted', async () => {
+    const proxied = await startApp();
+    try {
+      const response = await proxied.app.inject({
+        method: 'GET',
+        url: '/api/config',
+        headers: {
+          host: '127.0.0.1:3000',
+          'x-forwarded-host': 'openaccess.example',
+          'x-forwarded-proto': 'https',
+        },
+      });
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toMatchObject({ contentOrigin: 'https://openaccess.example' });
+    } finally {
+      await proxied.close();
+    }
+  });
+});
+
 describe('HTML proxying', () => {
   let body: string;
   let response: Response;

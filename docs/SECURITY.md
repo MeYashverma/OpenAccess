@@ -50,7 +50,7 @@ OpenAccess is intentionally free to use without an account. The controls are lim
 | Control | Default | Effect |
 | --- | --- | --- |
 | `RATE_LIMIT_PER_SESSION` | 1200/min | Caps a single browsing session's request rate |
-| `RATE_LIMIT_PER_IP` | 2400/min | Caps all sessions from one address behind the same proxy (`req.ip` uses `X-Forwarded-For` only when `TRUST_PROXY=1`) |
+| `RATE_LIMIT_PER_IP` | 2400/min | Caps all sessions from one address behind the same proxy (`req.ip` uses `X-Forwarded-For` only when `TRUST_PROXY=1`; `X-Forwarded-Host` is likewise trusted only then, for the Codespaces-style forwarded origin) |
 | `SESSION_CREATES_PER_HOUR` | 60 | Stops token-farming by dropping and recreating sessions |
 | `MAX_CONCURRENT_REQUESTS_PER_SESSION` | 12 | Bounds fan-out per session |
 | `MAX_UPLOAD_MB` / `MAX_RESPONSE_MB` | 10 / 30 | Bounds per-request memory |

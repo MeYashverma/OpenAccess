@@ -13,7 +13,7 @@
 
 ## Honest status
 
-This repository contains a working, tested proxy and UI. It does **not** ship a permanently hosted public instance: a proxy needs a real server process, so it cannot live on GitHub Pages or any static host. The fastest path to a live URL is the free Render blueprint below (about five minutes, no card), or `docker compose up --build` on any machine you control.
+This repository contains a working, tested proxy and UI. It does **not** ship a permanently hosted public instance: a proxy needs a real server process, so it cannot live on GitHub Pages or any static host. GitHub can still host a live URL through **Codespaces** (a real container with a public forwarded HTTPS port), and the fastest permanent path is the free Render blueprint below (about five minutes, no card) or `docker compose up --build` on any machine you control.
 
 Compatibility is documented rather than promised. The automated suite exercises the proxy against a local fixture site — HTML/CSS rewriting, cookies, fetch/XHR/WebSocket relaying, redirects, gzip, binary passthrough and every limit — but no test suite can certify every website. Sites that actively block datacenter traffic, rely on device attestation, or demand cross-origin-isolated browser APIs will break, and [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) says which and why.
 
@@ -75,7 +75,7 @@ The production server needs the built client and runtime (`dist/client`, `dist/r
 
 ```bash
 npm run typecheck        # server + client TypeScript
-npm test                 # 134 unit, integration, runtime and UI tests
+npm test                 # 135 unit, integration, runtime and UI tests
 npm run build            # server, client and injected runtime
 npm run smoke -- --base http://localhost:3000 --offline
 ```
@@ -91,6 +91,17 @@ node scripts/smoke.mjs --base http://localhost:3000 --target http://127.0.0.1:41
 ```
 
 ## Deploy a public HTTPS instance
+
+### GitHub Codespaces (hosted by GitHub, temporary)
+
+[Open OpenAccess in Codespaces](https://codespaces.new/MeYashverma/OpenAccess?ref=arena/bc21ad6c-openaccess&quickstart=1)
+
+The devcontainer installs dependencies, builds the client/runtime/server, and starts the proxy on port 3000. GitHub forwards that port as a public HTTPS URL:
+
+- open the **Ports** panel and confirm port 3000 is **Public** (the devcontainer requests public visibility; organisation policies can override it);
+- open `https://<codespace-name>-3000.app.github.dev` — that is the real app, backed by the real proxy in the container.
+
+This is genuinely GitHub-hosted compute, not GitHub Pages. It is also not a 24/7 host: free Codespaces have a monthly core-hour quota, stop after the idle timeout, and lose sessions when deleted. The devcontainer sets conservative limits (`MAX_SESSIONS=60`, `MAX_RESPONSE_MB=15`, `EGRESS_LIMIT_MB_PER_HOUR=500`) because a public forwarded port is an open proxy. Stop the codespace when you are done. For a durable deployment, use Render, Docker or a VPS.
 
 ### Render (free plan, no card)
 
@@ -116,7 +127,7 @@ Or `docker compose up --build` with a `.env` file based on [.env.example](.env.e
 
 | Platform | Why not |
 | --- | --- |
-| GitHub Pages / Netlify static / Cloudflare Pages | Static file hosts cannot run the Node process, hold cookies, or open upstream sockets. |
+| GitHub Pages / Netlify static / Cloudflare Pages | Static file hosts cannot run the Node process, hold cookies, or open upstream sockets. (GitHub Codespaces can run it temporarily — see above.) |
 | Cloudflare Workers / Pages Functions | Cloudflare's terms prohibit running a proxy/VPN service on their network, and the runtime cannot offer the same socket and timeout behaviour. |
 | Serverless functions (Vercel, Netlify Functions) | Per-request limits break WebSockets, streaming downloads and in-memory sessions; many providers also prohibit proxy services. |
 

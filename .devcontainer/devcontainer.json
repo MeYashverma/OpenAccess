@@ -1,0 +1,33 @@
+{
+  "name": "OpenAccess",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "npm ci && npm run build",
+  "postStartCommand": "bash scripts/codespace-start.sh",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "OpenAccess",
+      "onAutoForward": "openPreview",
+      "visibility": "public"
+    }
+  },
+  "containerEnv": {
+    "PORT": "3000",
+    "HOST": "0.0.0.0",
+    "NODE_ENV": "production",
+    "TRUST_PROXY": "1",
+    "FORCE_HTTPS": "1",
+    "MAX_SESSIONS": "60",
+    "MAX_RESPONSE_MB": "15",
+    "MAX_UPLOAD_MB": "5",
+    "MAX_BUFFERED_MB": "96",
+    "RATE_LIMIT_PER_SESSION": "600",
+    "RATE_LIMIT_PER_IP": "1200",
+    "SESSION_CREATES_PER_HOUR": "30",
+    "EGRESS_LIMIT_MB_PER_HOUR": "500"
+  },
+  "remoteUser": "node"
+}

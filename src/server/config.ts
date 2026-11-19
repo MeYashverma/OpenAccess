@@ -144,7 +144,14 @@ export interface RequestOrigins {
 
 /** Resolve the origins this request arrived on, taking reverse proxies into account. */
 export function resolveOrigins(config: AppConfig, headers: Record<string, string | string[] | undefined>): RequestOrigins {
-  const host = header(headers, 'host') || `localhost:${config.port}`;
+  // Codespaces and other reverse proxies may rewrite Host and pass the
+  // original hostname in X-Forwarded-Host. Only honour it when the deployment
+  // has opted into trusting proxy headers.
+  const forwardedHost =
+    config.trustProxy && header(headers, 'x-forwarded-host')
+      ? header(headers, 'x-forwarded-host')!.split(',')[0]!.trim()
+      : undefined;
+  const host = forwardedHost || header(headers, 'host') || `localhost:${config.port}`;
   const forwardedProto = header(headers, 'x-forwarded-proto');
   const proto = config.forceHttps ? 'https' : forwardedProto?.split(',')[0]?.trim() || 'http';
   const requestOrigin = `${proto}://${host}`;

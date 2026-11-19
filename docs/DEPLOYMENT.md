@@ -23,7 +23,7 @@ All variables are optional. Defaults are in `src/server/config.ts` and [.env.exa
 | `PORT` | `3000` | Most platforms inject this |
 | `PUBLIC_ORIGIN` | derived from request | Canonical UI origin, e.g. `https://openaccess.example.com`. Set it in production: social previews, canonical links and host checks use it. |
 | `CONTENT_ORIGIN` | same as public | Optional separate origin for proxied pages, e.g. `https://p.openaccess.example.com`. It gives pages a real origin (better site compatibility) but weakens cross-site isolation inside a session. Leave unset for untrusted public browsing. See [SECURITY.md](SECURITY.md#cross-site-isolation-within-a-session). |
-| `TRUST_PROXY` | `1` | Trust `X-Forwarded-*` from the reverse proxy. Set to `0` if the process is directly exposed and no proxy sets those headers. |
+| `TRUST_PROXY` | `1` | Trust `X-Forwarded-*` (including `X-Forwarded-Host`, used by Codespaces) from the reverse proxy. Set to `0` if the process is directly exposed and no proxy sets those headers. |
 | `FORCE_HTTPS` | `0` | Treat requests as HTTPS even without `X-Forwarded-Proto` |
 | `ACCESS_LOG` | `0` | One redacted line per request; never includes `/p/` paths |
 
@@ -61,6 +61,30 @@ All variables are optional. Defaults are in `src/server/config.ts` and [.env.exa
 | `UPSTREAM_CONNECT_TIMEOUT_MS` | `10000` | TCP connect |
 | `UPSTREAM_HEADERS_TIMEOUT_MS` | `20000` | Time to response headers |
 | `UPSTREAM_BODY_TIMEOUT_MS` | `120000` | Idle time while reading a body |
+
+## GitHub Codespaces (GitHub-hosted, temporary)
+
+A Codespace is a real Linux container with a public HTTPS port, so it can host OpenAccess without a separate hosting account. This repository includes a devcontainer that builds everything and starts the server.
+
+1. Open <https://codespaces.new/MeYashverma/OpenAccess?ref=arena/bc21ad6c-openaccess&quickstart=1> (or **Code → Codespaces → Create codespace on your branch**).
+2. Wait for `postCreateCommand` (`npm ci && npm run build`) and `postStartCommand` (`scripts/codespace-start.sh`) to finish.
+3. In the **Ports** panel, confirm port 3000 is forwarded and set **Port Visibility → Public** if it is private. The devcontainer requests `"visibility": "public"`, but organisation policy can override it.
+4. Open `https://<codespace-name>-3000.app.github.dev`.
+
+Environment limits come from `.devcontainer/devcontainer.json`:
+
+- `FORCE_HTTPS=1` and `TRUST_PROXY=1` so links use the forwarded HTTPS origin; `X-Forwarded-Host` supplies the public hostname.
+- `MAX_SESSIONS=60`, `MAX_RESPONSE_MB=15`, `MAX_UPLOAD_MB=5`, `MAX_BUFFERED_MB=96`, reduced rate limits and `EGRESS_LIMIT_MB_PER_HOUR=500`.
+
+Caveats:
+
+- Free Codespaces have a monthly core-hour and storage quota; a codespace counts while it is running. The default idle timeout stops it, and the public URL is unavailable until it is started again.
+- Deleting the codespace destroys sessions, cookies and site storage. Nothing is persisted server-side anyway.
+- A public forwarded port is reachable by anyone who obtains the URL. Do not leave it running indefinitely; stop it from the Codespaces dashboard.
+- If the port is private, only signed-in GitHub users with access to the repository can open it.
+- If you change the source, rebuild inside the codespace (`npm run build`) and restart with `scripts/codespace-start.sh`.
+
+For a 24/7 URL, use Render, another long-lived container host, or a VPS below. Codespaces is the only GitHub-native runtime that can serve a real proxy; GitHub Pages remains static-only.
 
 ## Render (recommended free path)
 
@@ -178,6 +202,7 @@ Set `TRUST_PROXY=1` so `req.ip` and the scheme come from these headers. If you t
 | Platform | Can host OpenAccess? | Reason |
 | --- | --- | --- |
 | Render (free/paid web service) | Yes | Persistent Node process, WebSockets, HTTPS; free plan sleeps |
+| GitHub Codespaces | Yes, temporary | Real container and public HTTPS port; stops on idle and consumes free core-hours |
 | Koyeb / Fly.io / Railway-style app hosts | Yes, with a long-lived process | Check current free allowances and cold-start behaviour |
 | Any VPS (Hetzner, DigitalOcean, EC2, …) | Yes | Full control; you manage TLS and updates |
 | Docker on a home server + tunnel | Yes | Home egress IP is often blocked by bot protection; TLS via Caddy |
