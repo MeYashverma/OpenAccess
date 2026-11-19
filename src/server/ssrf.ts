@@ -324,6 +324,10 @@ export function createUpstreamDispatcher(config: AppConfig) {
       lookup: makeGuardedLookup(config.allowPrivateTargets),
       timeout: config.upstreamConnectTimeoutMs,
     },
+    // undici's default is 16 KiB. YouTube and other cookie-heavy origins send
+    // larger header blocks; rejecting them produced a 502 with
+    // UND_ERR_HEADERS_OVERFLOW even though the page itself was fine.
+    maxHeaderSize: config.maxUpstreamHeaderBytes,
     headersTimeout: config.upstreamHeadersTimeoutMs,
     bodyTimeout: config.upstreamBodyTimeoutMs,
     keepAliveTimeout: 15_000,
