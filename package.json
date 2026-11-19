@@ -2,7 +2,7 @@
   "name": "openaccess",
   "version": "1.0.0",
   "private": true,
-  "description": "OpenAccess — a free, open-source web browsing platform that renders websites through a secure server-side proxy.",
+  "description": "OpenAccess \u2014 a free, open-source web browsing platform that renders websites through a secure server-side proxy.",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "engines": {
@@ -16,7 +16,7 @@
     "build:runtime": "node scripts/build-runtime.mjs",
     "start": "node dist/server/server/index.js",
     "typecheck": "tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.client.json --noEmit",
-    "test": "node scripts/build-runtime.mjs && vitest run",
+    "test": "node scripts/build-runtime.mjs && npm run build:client && vitest run",
     "test:watch": "vitest",
     "smoke": "node scripts/smoke.mjs"
   },
