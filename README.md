@@ -75,7 +75,7 @@ The production server needs the built client and runtime (`dist/client`, `dist/r
 
 ```bash
 npm run typecheck        # server + client TypeScript
-npm test                 # 136 unit, integration, runtime and UI tests
+npm test                 # 139 unit, integration, runtime and UI tests
 npm run build            # server, client and injected runtime
 npm run smoke -- --base http://localhost:3000 --offline
 ```
@@ -151,6 +151,7 @@ Every setting is an environment variable; all are optional. [.env.example](.env.
 | `TRUST_PROXY` | `1` | Honour `X-Forwarded-Proto` from a reverse proxy |
 | `ALLOW_PRIVATE_TARGETS` | `0` | Never enable on a public deployment |
 | `MAX_RESPONSE_MB` / `MAX_UPLOAD_MB` | 30 / 10 | Rewrite/collection and upload caps |
+| `MAX_UPSTREAM_HEADER_KB` | 128 | Upstream response header cap; 16 KiB (the undici default) breaks YouTube |
 | `RATE_LIMIT_PER_SESSION` / `RATE_LIMIT_PER_IP` | 1200 / 2400 | Per-minute request limits |
 | `EGRESS_LIMIT_MB_PER_HOUR` | `0` (off) | Hard bandwidth ceiling per process |
 | `MAX_SESSIONS` | 2000 | In-memory session capacity |

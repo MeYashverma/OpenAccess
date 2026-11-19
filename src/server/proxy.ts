@@ -683,6 +683,7 @@ export async function handleProxyRequest(
       return;
     }
     const code = (error as { code?: string }).code;
+    const message = error instanceof Error ? error.message : String(error);
     if (abort.signal.aborted) return;
     if (code === 'BUFFER_PRESSURE') {
       sendProxyError(req, reply, {
@@ -706,6 +707,21 @@ export async function handleProxyRequest(
       });
       return;
     }
+    if (code === 'UND_ERR_HEADERS_OVERFLOW') {
+      sendProxyError(req, reply, {
+        status: 502,
+        title: 'The site sent oversized response headers',
+        message: `The destination's response headers exceeded OpenAccess's ${Math.floor(
+          config.maxUpstreamHeaderBytes / 1024,
+        )} KB limit. Raise MAX_UPSTREAM_HEADER_KB if this site is otherwise trusted.`,
+        host: target.host,
+        detail: message.slice(0, 500),
+        retry: false,
+        homeOrigin: origins.mode === 'isolated' ? origins.publicOrigin : undefined,
+        extraHeaders: corsHeaders(req),
+      });
+      return;
+    }
     if (code === 'TOO_MANY_REDIRECTS') {
       sendProxyError(req, reply, {
         status: 502,
@@ -718,7 +734,6 @@ export async function handleProxyRequest(
       return;
     }
 
-    const message = error instanceof Error ? error.message : String(error);
     const tls = /certificate|TLS|SSL/i.test(message);
     sendProxyError(req, reply, {
       status: 502,

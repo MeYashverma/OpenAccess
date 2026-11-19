@@ -78,6 +78,33 @@ describe('reverse proxy headers', () => {
   });
 });
 
+describe('upstream response headers', () => {
+  it('accepts header blocks larger than the Node default', async () => {
+    // Use inject: Node's global fetch has the same 16 KiB response-header
+    // default that the proxy itself is being tested against.
+    const target = new URL(proxyUrl(app.origin, token, `${fixture.origin}/huge-headers`));
+    const response = await app.app.inject({ method: 'GET', url: target.pathname + target.search });
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toContain('huge headers');
+  });
+
+  it('explains a header block that exceeds the configured cap', async () => {
+    const limited = await startApp({ MAX_UPSTREAM_HEADER_KB: '16' });
+    try {
+      const limitedToken = await createSession(limited.origin);
+      const target = new URL(proxyUrl(limited.origin, limitedToken, `${fixture.origin}/huge-headers`));
+      const response = await limited.app.inject({
+        method: 'GET',
+        url: target.pathname + target.search,
+      });
+      expect(response.statusCode).toBe(502);
+      expect(response.body).toContain('oversized response headers');
+    } finally {
+      await limited.close();
+    }
+  });
+});
+
 describe('HTML proxying', () => {
   let body: string;
   let response: Response;

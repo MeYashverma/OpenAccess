@@ -41,6 +41,8 @@ services:
         value: "8"
       - key: MAX_BUFFERED_MB
         value: "96"
+      - key: MAX_UPSTREAM_HEADER_KB
+        value: "128"
       # Render's free plan includes 100 GB/month of bandwidth. Cap the proxy
       # below that so a public deployment cannot quietly consume it all.
       - key: EGRESS_LIMIT_MB_PER_HOUR

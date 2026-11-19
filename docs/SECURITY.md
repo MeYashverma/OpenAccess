@@ -54,6 +54,7 @@ OpenAccess is intentionally free to use without an account. The controls are lim
 | `SESSION_CREATES_PER_HOUR` | 60 | Stops token-farming by dropping and recreating sessions |
 | `MAX_CONCURRENT_REQUESTS_PER_SESSION` | 12 | Bounds fan-out per session |
 | `MAX_UPLOAD_MB` / `MAX_RESPONSE_MB` | 10 / 30 | Bounds per-request memory |
+| `MAX_UPSTREAM_HEADER_KB` | 128 | Bounds the upstream response header block per connection (undici's 16 KiB default rejects real sites such as YouTube) |
 | `EGRESS_LIMIT_MB_PER_HOUR` | off | Hard stop when a deployment's bandwidth allowance is consumed |
 | `MAX_SESSIONS` | 2000 | LRU eviction, then refusal, bounding memory |
 

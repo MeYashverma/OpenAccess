@@ -29,6 +29,8 @@ export interface AppConfig {
   sessionMaxMs: number;
   maxResponseBytes: number;
   maxUploadBytes: number;
+  /** Maximum total size of an upstream response header block. */
+  maxUpstreamHeaderBytes: number;
   upstreamConnectTimeoutMs: number;
   upstreamHeadersTimeoutMs: number;
   upstreamBodyTimeoutMs: number;
@@ -107,6 +109,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     sessionMaxMs: num(env.SESSION_MAX_HOURS, 12) * 3_600_000,
     maxResponseBytes: num(env.MAX_RESPONSE_MB, 30) * 1024 * 1024,
     maxUploadBytes: num(env.MAX_UPLOAD_MB, 10) * 1024 * 1024,
+    // undici defaults to 16 KiB, which YouTube and some cookie-heavy sites
+    // exceed. 128 KiB covers real responses without letting one connection
+    // reserve an unbounded buffer.
+    maxUpstreamHeaderBytes:
+      Math.max(16, Math.min(512, num(env.MAX_UPSTREAM_HEADER_KB, 128))) * 1024,
     upstreamConnectTimeoutMs: num(env.UPSTREAM_CONNECT_TIMEOUT_MS, 10_000),
     upstreamHeadersTimeoutMs: num(env.UPSTREAM_HEADERS_TIMEOUT_MS, 20_000),
     upstreamBodyTimeoutMs: num(env.UPSTREAM_BODY_TIMEOUT_MS, 120_000),

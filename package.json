@@ -1,8 +1,8 @@
 {
   "name": "openaccess",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
-  "description": "OpenAccess \u2014 a free, open-source web browsing platform that renders websites through a secure server-side proxy.",
+  "description": "OpenAccess — a free, open-source web browsing platform that renders websites through a secure server-side proxy.",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "engines": {

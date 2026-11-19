@@ -269,6 +269,7 @@ export function buildApp(deps: AppDeps): FastifyInstance {
       limits: {
         maxUploadMb: Math.floor(config.maxUploadBytes / (1024 * 1024)),
         maxResponseMb: Math.floor(config.maxResponseBytes / (1024 * 1024)),
+        maxUpstreamHeaderKb: Math.floor(config.maxUpstreamHeaderBytes / 1024),
         sessionIdleMinutes: Math.round(config.sessionIdleMs / 60_000),
         sessionMaxHours: Math.round(config.sessionMaxMs / 3_600_000),
         rateLimitPerMinute: config.maxRequestsPerSession,

@@ -84,6 +84,15 @@ export async function startFixture(): Promise<Fixture> {
       res.end('set');
       return;
     }
+    if (url.pathname === '/huge-headers') {
+      res.writeHead(200, {
+        'content-type': 'text/html',
+        // Above Node's/undici's 16 KiB default, below OpenAccess's 128 KiB cap.
+        'x-fixture-large': 'a'.repeat(48 * 1024),
+      });
+      res.end('<html><body><h1 id="huge">huge headers</h1></body></html>');
+      return;
+    }
     if (url.pathname === '/headers-page') {
       res.writeHead(200, {
         'content-type': 'text/html',

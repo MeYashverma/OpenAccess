@@ -52,7 +52,8 @@ What is **not** covered by automation: rendering fidelity, per-site JavaScript b
 | Cookies and log-in | Usually works | Server-side jar with domain/path/secure/HttpOnly/SameSite handling. Multi-page log-ins work. Sites that require third-party cookies, device binding or WebAuthn may not. |
 | HTTP Basic authentication | Partial | The 401 challenge may appear; embedded credentials in URLs are rejected for security. |
 | OAuth / SSO pop-ups | Often broken | `window.open` becomes an OpenAccess tab, so the popup→opener relationship (and `postMessage` handshake) is lost. Redirect-based SSO can work. |
-| CAPTCHAs and bot checks | Often broken | Datacenter addresses and shared sessions are commonly flagged. OpenAccess does not attempt to defeat bot protection. |
+| CAPTCHAs and bot checks | Often broken | Datacenter addresses and shared sessions are commonly flagged. OpenAccess does not attempt to defeat bot protection. Google Search in particular often redirects to a `/sorry/` reCAPTCHA from Render's IPs; the reCAPTCHA then reports "Invalid domain for site key" because the page runs on the proxy origin. Use another search engine or a home connection. |
+| Large response headers | Works up to 128 KiB | YouTube and cookie-heavy sites exceed Node/undici's 16 KiB default; `MAX_UPSTREAM_HEADER_KB` raises the cap. Sites above it return a clear 502. |
 | WebSockets | Works, capped | Relayed frames, binary support, subprotocols, session cookies and origin rewrite. 512 KiB message cap, 16 sockets per session, no compression. |
 | Server-Sent Events | Works | Plain streaming response; no proxy buffering of text/event-stream. |
 | Large downloads | Works within limits | Binary streaming with range support; the response/egress caps still apply. |

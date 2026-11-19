@@ -14,4 +14,11 @@ describe('public origin configuration', () => {
     ).toBe('https://browse.example.com');
     expect(loadConfig({}).publicOrigin).toBeNull();
   });
+
+  it('raises the upstream header limit above the 16 KiB default', () => {
+    expect(loadConfig({}).maxUpstreamHeaderBytes).toBe(128 * 1024);
+    expect(loadConfig({ MAX_UPSTREAM_HEADER_KB: '64' }).maxUpstreamHeaderBytes).toBe(64 * 1024);
+    expect(loadConfig({ MAX_UPSTREAM_HEADER_KB: '1' }).maxUpstreamHeaderBytes).toBe(16 * 1024);
+    expect(loadConfig({ MAX_UPSTREAM_HEADER_KB: '9999' }).maxUpstreamHeaderBytes).toBe(512 * 1024);
+  });
 });

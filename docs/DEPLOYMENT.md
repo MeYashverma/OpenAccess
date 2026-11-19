@@ -36,6 +36,7 @@ All variables are optional. Defaults are in `src/server/config.ts` and [.env.exa
 | `SESSION_MAX_HOURS` | `12` | Absolute session lifetime |
 | `MAX_RESPONSE_MB` | `30` | Rewritten HTML/CSS cap; larger returns 502 |
 | `MAX_UPLOAD_MB` | `10` | Request body cap |
+| `MAX_UPSTREAM_HEADER_KB` | `128` | Upstream response header block cap (16–512 KiB). The default avoids `Headers Overflow Error` on YouTube and cookie-heavy sites. |
 | `MAX_CONCURRENT_REQUESTS_PER_SESSION` | `12` | Fan-out cap |
 | `MAX_BUFFERED_MB` | `128` | Process-wide memory ceiling for HTML/CSS being rewritten; `0` disables it |
 | `RATE_LIMIT_WINDOW_SECONDS` | `60` | Fixed window |
@@ -260,6 +261,7 @@ The intended deployment is one process, sized vertically. A 1 GB instance can ho
 | WebSocket fails immediately (403) | The browser's `Origin` is not the expected content origin. In isolated mode, the page must be served from `CONTENT_ORIGIN`; do not open content directly on the public host. |
 | WebSocket upgrade times out behind a proxy | Allow `Upgrade`/`Connection` headers and raise `proxy_read_timeout`. |
 | 502 "page is too large" | Raise `MAX_RESPONSE_MB` or accept the limit for very large documents. |
+| 502 "site sent oversized response headers" | Raise `MAX_UPSTREAM_HEADER_KB` (up to 512) for a trusted site, or accept that its header block is unusually large. |
 | 429 after a minute | A limit is too low for the site's asset count. Raise `RATE_LIMIT_PER_SESSION`/`RATE_LIMIT_PER_IP`, or increase the window. |
 | 503 "bandwidth budget" | `EGRESS_LIMIT_MB_PER_HOUR` reached; wait for the hour rollover or raise it. |
 | Pages load but storage fails | `ENABLE_SERVER_STORAGE=0`, or the session storage cap was reached. |
