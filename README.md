@@ -94,6 +94,8 @@ node scripts/smoke.mjs --base http://localhost:3000 --target http://127.0.0.1:41
 
 ### GitHub Codespaces (hosted by GitHub, temporary)
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/MeYashverma/OpenAccess?ref=arena/bc21ad6c-openaccess&quickstart=1)
+
 [Open OpenAccess in Codespaces](https://codespaces.new/MeYashverma/OpenAccess?ref=arena/bc21ad6c-openaccess&quickstart=1)
 
 The devcontainer installs dependencies, builds the client/runtime/server, and starts the proxy on port 3000. GitHub forwards that port as a public HTTPS URL:

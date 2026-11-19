@@ -19,8 +19,8 @@ nohup node dist/server/server/index.js > /tmp/openaccess.log 2>&1 &
 echo $! > /tmp/openaccess.pid
 
 for _ in $(seq 1 30); do
-  if curl -fsS http://127.0.0.1:3000/healthz >/dev/null 2>&1; then
-    echo "OpenAccess is listening on port 3000 (log: /tmp/openaccess.log)"
+  if curl -fsS "http://127.0.0.1:${PORT:-3000}/healthz" >/dev/null 2>&1; then
+    echo "OpenAccess is listening on port ${PORT:-3000} (log: /tmp/openaccess.log)"
     exit 0
   fi
   sleep 1
