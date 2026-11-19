@@ -4,7 +4,9 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-if [ ! -f dist/server/server/index.js ] || [ ! -f dist/client/index.html ] || [ ! -f dist/runtime/runtime.js ]; then
+# Always build so source edits are picked up on a codespace restart. Set
+# OPENACCESS_SKIP_BUILD=1 for a fast restart when nothing changed.
+if [ "${OPENACCESS_SKIP_BUILD:-0}" != "1" ]; then
   npm run build
 fi
 
