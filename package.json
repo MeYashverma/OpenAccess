@@ -1,0 +1,65 @@
+{
+  "name": "openaccess",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OpenAccess \u2014 a free, open-source web browsing platform that renders websites through a secure server-side proxy.",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build:server && npm run build:client && npm run build:runtime",
+    "build:server": "tsc -p tsconfig.server.json",
+    "build:client": "vite build --config vite.client.config.ts",
+    "build:runtime": "node scripts/build-runtime.mjs",
+    "start": "node dist/server/server/index.js",
+    "typecheck": "tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.client.json --noEmit",
+    "test": "node scripts/build-runtime.mjs && npm run build:client && vitest run",
+    "test:watch": "vitest",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "fastify": "^5.6.0",
+    "parse5": "^8.0.0",
+    "undici": "^7.16.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.13",
+    "@types/node": "^22.18.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^5.0.0",
+    "esbuild": "^0.25.0",
+    "jsdom": "^31.0.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vite": "^7.1.0",
+    "vitest": "^5.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MeYashverma/OpenAccess.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MeYashverma/OpenAccess/issues"
+  },
+  "homepage": "https://github.com/MeYashverma/OpenAccess#readme",
+  "keywords": [
+    "web-proxy",
+    "browser",
+    "proxy",
+    "self-hosted",
+    "privacy",
+    "fastify",
+    "react",
+    "typescript"
+  ]
+}
