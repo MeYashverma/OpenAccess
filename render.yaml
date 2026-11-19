@@ -1,0 +1,38 @@
+# Render Blueprint. Push the repository, open Render → New → Blueprint, and
+# Render creates this service from the free plan. No card is required.
+#
+# After the first deploy, copy the assigned https://<name>.onrender.com URL into
+# PUBLIC_ORIGIN (Environment tab) and redeploy. Setting PUBLIC_ORIGIN is
+# recommended so canonical links, social preview URLs and the strict host check
+# all use the final hostname. It is not required to boot.
+services:
+  - type: web
+    name: openaccess
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: PUBLIC_ORIGIN
+        sync: false
+      - key: CONTENT_ORIGIN
+        sync: false
+      - key: MAX_SESSIONS
+        value: "400"
+      - key: RATE_LIMIT_PER_SESSION
+        value: "900"
+      - key: RATE_LIMIT_PER_IP
+        value: "1800"
+      - key: MAX_RESPONSE_MB
+        value: "25"
+      - key: MAX_UPLOAD_MB
+        value: "8"

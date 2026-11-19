@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+    <meta name="robots" content="noindex" />
+    <meta
+      name="description"
+      content="OpenAccess is a free, open-source web browser that runs in your browser tab."
+    />
+    <title>OpenAccess</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OpenAccess" />
+    <meta property="og:title" content="OpenAccess — a browser in your browser" />
+    <meta
+      property="og:description"
+      content="A free, open-source web browser that renders pages through a secure server-side proxy."
+    />
+    <meta property="og:image" content="%OA_PUBLIC_ORIGIN%/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="%OA_PUBLIC_ORIGIN%/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OpenAccess — a browser in your browser" />
+    <meta
+      name="twitter:description"
+      content="A free, open-source web browser that renders pages through a secure server-side proxy."
+    />
+    <meta name="twitter:image" content="%OA_PUBLIC_ORIGIN%/og.png" />
+    <script src="/theme-init.js"></script>
+  </head>
+  <body>
+    <noscript>
+      <div style="max-width:34rem;margin:12vh auto;padding:0 1.5rem;font:16px/1.6 system-ui,sans-serif">
+        <h1 style="font-size:1.5rem">JavaScript is required</h1>
+        <p>OpenAccess is a browsing shell that talks to its proxy server and renders pages in this tab. Enable
+        JavaScript to use it. The server-side proxy itself does not depend on your browser’s JavaScript.</p>
+      </div>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/main.tsx"></script>
+  </body>
+</html>

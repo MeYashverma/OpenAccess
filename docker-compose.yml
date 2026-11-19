@@ -1,0 +1,23 @@
+services:
+  openaccess:
+    build: .
+    image: openaccess:local
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # Set this to the public HTTPS origin in production, e.g.
+      # https://openaccess.example.com (a reverse proxy terminates TLS).
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-}
+      # Optional: serve proxied pages from a separate hostname/cookie domain.
+      CONTENT_ORIGIN: ${CONTENT_ORIGIN:-}
+      TRUST_PROXY: "1"
+      RATE_LIMIT_PER_SESSION: "1200"
+      MAX_RESPONSE_MB: "30"
+      MAX_UPLOAD_MB: "10"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
