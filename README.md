@@ -94,6 +94,8 @@ node scripts/smoke.mjs --base http://localhost:3000 --target http://127.0.0.1:41
 
 ### Render (free plan, no card)
 
+[Deploy to Render](https://render.com/deploy?repo=https://github.com/MeYashverma/OpenAccess) · or follow the manual steps:
+
 1. Fork or push this repository to GitHub.
 2. In Render, choose **New → Blueprint**, pick the repository, and apply `render.yaml`.
 3. Render builds with `npm ci && npm run build`, starts `npm start`, and probes `/healthz` over HTTPS.

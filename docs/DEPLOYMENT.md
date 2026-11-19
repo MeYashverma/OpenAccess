@@ -64,7 +64,7 @@ All variables are optional. Defaults are in `src/server/config.ts` and [.env.exa
 
 ## Render (recommended free path)
 
-The repository includes `render.yaml`, a Render Blueprint.
+The repository includes `render.yaml`, a Render Blueprint. You can start from <https://render.com/deploy?repo=https://github.com/MeYashverma/OpenAccess> or follow the steps manually.
 
 1. Push the repository to GitHub.
 2. In Render: **New → Blueprint**, select the repository, apply the plan. The free plan does not require a card.
